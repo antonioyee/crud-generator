@@ -4,7 +4,7 @@
  * @subpackage 		Yee Generator
  * @author 			Antonio Yee || yee.antonio@gmail.com || @antonioyee || antonioyee.mx
  * @license         MIT
- * @link			
+ * @link			https://github.com/antonioyee/crud-generator
  */
 class YeeGenerator {
 
