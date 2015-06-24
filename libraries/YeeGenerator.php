@@ -91,6 +91,12 @@ class YeeGenerator {
 
 					if ( $result_table['successful'] == TRUE ) {
 						$result['tbl'] = $result_table['tbl'];
+
+						$result_js = $this->_GenerateJS();
+
+						if ( $result_js['successful'] == TRUE ) {
+							$result['js'] = $result_js['js'];
+						}
 					}
 				}
 			}
@@ -524,6 +530,133 @@ class YeeGenerator {
 		if ( file_exists($route) ) {
 			$result['successful'] 	= TRUE;
 			$result['tbl']			= $route;
+		}else{
+			$result['successful'] 	= FALSE;
+		}
+
+		return $result;
+	}
+
+	private function _GenerateJS(){
+		if ( ! is_dir('./components/'.$this->table.'/js') ) {
+			mkdir('./components/'.$this->table.'/js', 0775);
+		}
+
+		$route = './components/'.$this->table.'/js/'.$this->table.'-module.js';
+
+		$js = fopen($route, "w+");
+
+			fwrite($js,"/**\n");
+			fwrite($js," * { NameApp }\n");
+			fwrite($js," * $this->table-module.js v1.0\n");
+			fwrite($js," * { NameDev } || { EmailDev } || { TwitterDev }\n");
+			fwrite($js," */\n");
+			fwrite($js,"$(function() {\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* SEARCH */\n");
+			fwrite($js,"	$('#btn-search').click(function(){\n");
+			fwrite($js,"		\$reload();\n");
+			fwrite($js,"		return false;\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* MODAL */\n");
+			fwrite($js,"	$('#btn-new').click(function(){\n");
+			fwrite($js,"		$('#modal-new-$this->table').modal('show');\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	$('#modal-new-$this->table').on('hidden.bs.modal', function () {\n");
+			fwrite($js,"		document.getElementById('form-new-$this->table').reset();\n");
+			fwrite($js,"		$('#mode').val('0');\n");
+			fwrite($js,"		$('#$this->primary_key').val('');\n");
+			fwrite($js,"		$('#lbl-title-modal').html('ADD ".strtoupper($this->table)."');\n");
+			fwrite($js,"		$('#form-new-$this->table div').removeClass('has-error');\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* SAVE */\n");
+			fwrite($js,"	$('#btn-new-$this->table').click(function(){\n");
+			fwrite($js,"		$('#btn-new-$this->table').button('loading');\n");
+			fwrite($js,"		$.post(app.url + '".$this->table."/save_".$this->table."', $('#form-new-$this->table').serialize(), function(result){\n");
+			fwrite($js,"			if( result.successful === true ){\n");
+			fwrite($js,"				$('#btn-new-$this->table').button('reset');\n");
+			fwrite($js,"				$.notificaciones('Notification', result.message, 'success');\n");
+			fwrite($js,"				$('#modal-new-$this->table').modal('hide');\n");
+			fwrite($js,"				\$reload();\n");
+			fwrite($js,"			}else{\n");
+			fwrite($js,"				$('#btn-new-$this->table').button('reset');\n");
+			fwrite($js,"				first = true;\n");
+			fwrite($js,"				$.each(result.message, function(field, notice){\n");
+			fwrite($js,"					if (first){\n");
+			fwrite($js,"						$('div .has-error').removeClass('has-error');\n");
+			fwrite($js,"						error = new Object({ field: field, message: notice });\n");
+			fwrite($js,"						first = false;\n");
+			fwrite($js,"					}\n");
+			fwrite($js,"					$('#'+field).parents('.form-group').addClass('has-error');\n");
+			fwrite($js,"				});\n");
+			fwrite($js,"				$.notificaciones('Incomplete Information', error.message, 'error');\n");
+			fwrite($js,"				$('#'+error.field).focus();\n");
+			fwrite($js,"			}\n");
+			fwrite($js,"		},'json');\n");
+			fwrite($js,"		return false;\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* EDIT */\n");
+			fwrite($js,"	$('div#container-$this->table').on('click', 'a.btn-update', function(){\n");
+			fwrite($js,"		$('#mode').val('1');\n");
+			fwrite($js,"		$('#lbl-title-modal').html('EDITING ".strtoupper($this->table)."');\n");
+			fwrite($js,"		var ".$this->primary_key." = $(this).attr('data-".str_replace('_', '-', $this->primary_key)."');\n");
+			fwrite($js,"		$.post(app.url + '".$this->table."/select_".$this->table."', { ".$this->primary_key." : ".$this->primary_key." }, function(data){\n");
+			
+			foreach ($this->field as $key => $value) {
+				fwrite($js,"			$('#$value').val(data.$value);\n");
+			}
+			fwrite($js,"			$('#modal-new-$this->table').modal('show');\n");
+			fwrite($js,"		},'json');\n");
+			fwrite($js,"		return false;\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* DELETE */\n");
+			fwrite($js,"	$('div#container-$this->table').on('click', 'a.btn-delete', function(){\n");
+			fwrite($js,"		var ".$this->primary_key." = $(this).attr('data-".str_replace('_', '-', $this->primary_key)."');\n");
+			fwrite($js,"		$.confirmar('Are you sure you want to delete?',{ \n");
+			fwrite($js,"			aceptar: function(){\n");
+			fwrite($js,"				$.post(app.url + '".$this->table."/delete_".$this->table."', { ".$this->primary_key." : ".$this->primary_key." }, function(result){\n");
+			fwrite($js,"					if ( result.successful === true ){\n");
+			fwrite($js,"						$.notificaciones('Notification', result.message, 'success');\n");
+			fwrite($js,"						\$reload();\n");
+			fwrite($js,"					}else{\n");
+			fwrite($js,"						if ( result.successful === false ) {\n");
+			fwrite($js,"							$.notificaciones('Error', result.message, false);\n");
+			fwrite($js,"						};\n");	
+			fwrite($js,"					};\n");
+			fwrite($js,"				},'json');\n");
+			fwrite($js,"			}\n");
+			fwrite($js,"		});\n");
+			fwrite($js,"		return false;\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* PAGINATION */\n");
+			fwrite($js,"	$('div#container-$this->table').on('click', 'div#pagination ul li a.btn-pagination',function(){\n");
+			fwrite($js,"		var parameters = ($(this).attr('href'));\n");
+			fwrite($js,"		$.post(parameters, $('#form-$this->table').serialize(), function(data){\n");
+			fwrite($js,"			$('#container-$this->table').html(data);\n");
+			fwrite($js,"		});\n");
+			fwrite($js,"		return false;\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"	/* GRAL FUNCTION LISTING TO RECHARGE */\n");
+			fwrite($js,"	\$reload = (function () {\n");
+			fwrite($js,"		$.post(app.url + '".$this->table."/pagination', $('#form-$this->table').serialize(), function(result){\n");
+			fwrite($js,"			$('#container-$this->table').html(result);\n");
+			fwrite($js,"		});\n");
+			fwrite($js,"	});\n");
+			fwrite($js,"	\n");
+			fwrite($js,"});");
+
+		fclose($js);
+
+		if ( file_exists($route) ) {
+			$result['successful'] 	= TRUE;
+			$result['js']			= $route;
 		}else{
 			$result['successful'] 	= FALSE;
 		}
