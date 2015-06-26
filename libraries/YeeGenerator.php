@@ -1,5 +1,5 @@
 <?php if (! defined('BASEPATH')) exit('No direct script access');
-/** 
+/**
  * @package 		CRUD´s GENERATOR for CodeIgniter
  * @subpackage 		Yee Generator
  * @author 			Antonio Yee || yee.antonio@gmail.com || @antonioyee || antonioyee.mx
@@ -8,7 +8,7 @@
  */
 class YeeGenerator {
 
-	var $script 		= NULL; 
+	var $script 		= NULL;
 	var $table 			= NULL;
 	var $field 			= array();
 	var $primary_key 	= NULL;
@@ -26,7 +26,7 @@ class YeeGenerator {
 	}
 
 	public function GeneratingComponents($name_sql){
-		$sql = $this->_ValidateRoute($name_sql);		
+		$sql = $this->_ValidateRoute($name_sql);
 
 		while( ! feof($sql) ) {
 			$this->script .= fgets($sql);
@@ -34,7 +34,7 @@ class YeeGenerator {
 
 		fclose($sql);
 
-		$this->script = explode(';', $this->script); 
+		$this->script = explode(';', $this->script);
 
 		for ($index=0; $index < count($this->script)-1 ; $index++) {
 
@@ -55,12 +55,12 @@ class YeeGenerator {
 			if ( strpos( $this->script[$index], "CREATE TABLE" ) ) { // Get data fields
 				$line = explode( "\n", $this->script[$index] );
 
-				for ($row=0; $row < count($line)-1 ; $row++) { 
+				for ($row=0; $row < count($line)-1 ; $row++) {
 
 					$field_table = explode('`', $line[$row] );
 
-					if ( isset($field_table[1]) && $this->table != $field_table[1] 
-						&& ! in_array($field_table[1], $this->field) && ! strpos( $line[$row], "`fk_" ) 
+					if ( isset($field_table[1]) && $this->table != $field_table[1]
+						&& ! in_array($field_table[1], $this->field) && ! strpos( $line[$row], "`fk_" )
 						&& ! strpos( $line[$row], "ibfk" ) ){
 
 						array_push($this->field, $field_table[1]);
@@ -111,7 +111,7 @@ class YeeGenerator {
 		if ( ! is_dir('./components/'.$this->table) ) {
 			mkdir('./components/'.$this->table, 0775);
 		}
-		
+
 		if ( ! is_dir('./components/'.$this->table.'/models') ) {
 			mkdir('./components/'.$this->table.'/models', 0775);
 		}
@@ -139,7 +139,7 @@ class YeeGenerator {
 			 */
 			fwrite($model,"	public function List".ucwords($this->table)."(\$rows = NULL, \$segment = NULL, \$list = NULL) {\n");
 			$string_field = '';
-			for ($i=0; $i < count($this->field); $i++) { 
+			for ($i=0; $i < count($this->field); $i++) {
 				if ( $i == count($this->field)-1 ) {
 					$string_field .= $this->field[$i];
 				}else{
@@ -154,7 +154,7 @@ class YeeGenerator {
 			fwrite($model,"			\$dato = \$this->db->escape_str(\$this->input->post('search'));\n");
 
 			$string_search = '';
-			for ($i=0; $i < count($this->field); $i++) { 
+			for ($i=0; $i < count($this->field); $i++) {
 				if ( $i == count($this->field)-1 ) {
 					$string_search .= "					".$this->table.".".$this->field[$i]." LIKE \"%'.\$dato.'%\" ";
 				}else{
@@ -165,7 +165,7 @@ class YeeGenerator {
 			fwrite($model,"			\$this->db->where('( \n");
 			fwrite($model,"".$string_search." \n");
 			fwrite($model,"								)');\n");
-			
+
 			fwrite($model,"		}\n");
 			fwrite($model,"	\n");
 			fwrite($model,"		//\$this->db->order_by('', ''); // ASC || DESC\n");
@@ -214,7 +214,7 @@ class YeeGenerator {
 			 */
 			fwrite($model,"	public function Select".ucwords($this->table)."() {\n");
 			$string_field = '';
-			for ($i=0; $i < count($this->field); $i++) { 
+			for ($i=0; $i < count($this->field); $i++) {
 				if ( $i == count($this->field)-1 ) {
 					$string_field .= $this->field[$i];
 				}else{
@@ -308,7 +308,7 @@ class YeeGenerator {
 					fwrite($controller,"			\$this->form_validation->set_rules('".$value."','".ucwords(str_replace('_', ' ',$value))."','trim|xss_clean|required|max_length[255]');\n");
 				}
 			}
-			
+
 			fwrite($controller,"			if ( \$this->form_validation->run() === FALSE ){\n");
 			fwrite($controller,"				\$result['message']		= \$this->form_validation->_error_array;\n");
 			fwrite($controller,"				\$result['successful']	= FALSE;\n");
@@ -418,7 +418,7 @@ class YeeGenerator {
 			fwrite($module,"</form>\n");
 			fwrite($module,"\n");
 			fwrite($module,"<div id=\"container-$this->table\">\n");
-			fwrite($module,"	<?= \$this->table ?>\n");
+			fwrite($module,"	<?= \$table ?>\n");
 			fwrite($module,"</div>\n");
 			fwrite($module,"\n");
 			fwrite($module,"<div id=\"modal-new-$this->table\" class=\"modal fade\">\n");
@@ -516,7 +516,7 @@ class YeeGenerator {
 			fwrite($tbl,"			</tr>\n");
 			fwrite($tbl,"		<?php endif ?>\n");
 
-			
+
 
 			fwrite($tbl,"	</tbody>\n");
 			fwrite($tbl,"</table>\n");
@@ -605,7 +605,7 @@ class YeeGenerator {
 			fwrite($js,"		$('#lbl-title-modal').html('EDITING ".strtoupper($this->table)."');\n");
 			fwrite($js,"		var ".$this->primary_key." = $(this).attr('data-".str_replace('_', '-', $this->primary_key)."');\n");
 			fwrite($js,"		$.post(app.url + '".$this->table."/select_".$this->table."', { ".$this->primary_key." : ".$this->primary_key." }, function(data){\n");
-			
+
 			foreach ($this->field as $key => $value) {
 				fwrite($js,"			$('#$value').val(data.$value);\n");
 			}
@@ -626,7 +626,7 @@ class YeeGenerator {
 			fwrite($js,"					}else{\n");
 			fwrite($js,"						if ( result.successful === false ) {\n");
 			fwrite($js,"							$.notificaciones('Error', result.message, false);\n");
-			fwrite($js,"						};\n");	
+			fwrite($js,"						};\n");
 			fwrite($js,"					};\n");
 			fwrite($js,"				},'json');\n");
 			fwrite($js,"			}\n");
@@ -669,8 +669,8 @@ class YeeGenerator {
 		$sql 	= fopen($route , "r");
 		while(!feof($sql)) {
 			$code .= str_replace(
-									array('<','>'), 
-									array('&lt;','&gt;'), 
+									array('<','>'),
+									array('&lt;','&gt;'),
 									fgets($sql));
 		}
 		fclose($sql);
