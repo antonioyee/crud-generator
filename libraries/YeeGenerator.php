@@ -96,6 +96,12 @@ class YeeGenerator {
 
 						if ( $result_js['successful'] == TRUE ) {
 							$result['js'] = $result_js['js'];
+
+							$result_zip = $this->_GenerateZIP();
+
+							if ( $result_zip['successful'] == TRUE ) {
+								$result['zip'] = $result_zip['zip'];
+							}
 						}
 					}
 				}
@@ -659,6 +665,28 @@ class YeeGenerator {
 			$result['js']			= $route;
 		}else{
 			$result['successful'] 	= FALSE;
+		}
+
+		return $result;
+	}
+
+	private function _GenerateZIP(){
+		$zip 		= new ZipArchive();
+		$file_zip 	= './components/'.$this->table.'.zip';
+
+		if( $zip->open($file_zip, ZIPARCHIVE::CREATE) === true ) {
+
+			$zip->addFile('./components/'.$this->table.'/controllers/'.$this->table.'.php', '/'.$this->table.'/controllers/'.$this->table.'.php');
+			$zip->addFile('./components/'.$this->table.'/models/'.$this->table.'_model.php', '/'.$this->table.'/models/'.$this->table.'_model.php');
+			$zip->addFile('./components/'.$this->table.'/js/'.$this->table.'-module.js', '/'.$this->table.'/js/'.$this->table.'-module.js');
+			$zip->addFile('./components/'.$this->table.'/views/'.$this->table.'-module.php', '/'.$this->table.'/views/'.$this->table.'-module.php');
+			$zip->addFile('./components/'.$this->table.'/views/'.$this->table.'-table.php', '/'.$this->table.'/views/'.$this->table.'-table.php');
+			$zip->close();
+
+			$result['zip']			= $file_zip;
+			$result['successful']	= TRUE;
+		}else{
+			$result['successful']	= FALSE;
 		}
 
 		return $result;
