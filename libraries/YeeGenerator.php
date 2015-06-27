@@ -128,7 +128,7 @@ class YeeGenerator {
 
 			fwrite($model,"<?php if (! defined('BASEPATH')) exit('No direct script access');\n");
 
-			$this->_generateDocument('model', $model, ucwords($this->table));
+			$this->_GenerateDocument('model', $model, ucwords($this->table));
 
 			fwrite($model,"class ".ucwords($this->table)."_model extends CI_Model{\n");
 			fwrite($model,"	\n");
@@ -265,7 +265,7 @@ class YeeGenerator {
 
 			fwrite($controller,"<?php if (! defined('BASEPATH')) exit('No direct script access');\n");
 
-			$this->_generateDocument('controller', $controller, ucwords($this->table));
+			$this->_GenerateDocument('controller', $controller, ucwords($this->table));
 
 			fwrite($controller,"class ".ucwords($this->table)." extends CI_Controller { \n");
 			fwrite($controller,"\n");
@@ -546,7 +546,7 @@ class YeeGenerator {
 
 		$js = fopen($route, "w+");
 
-			$this->_generateDocument('js', $js, $this->table);
+			$this->_GenerateDocument('js', $js, $this->table);
 
 			fwrite($js,"$(function() {\n");
 			fwrite($js,"	\n");
@@ -683,7 +683,7 @@ class YeeGenerator {
 		return $result;
 	}
 
-	private function _generateDocument($type, $type_component, $subpackage){
+	private function _GenerateDocument($type, $type_component, $subpackage){
 		fwrite($type_component,"/** \n");
 		fwrite($type_component," * @package { NameApp }\n");
 
