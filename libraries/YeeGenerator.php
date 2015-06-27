@@ -127,12 +127,9 @@ class YeeGenerator {
 		$model = fopen($route, "w+");
 
 			fwrite($model,"<?php if (! defined('BASEPATH')) exit('No direct script access');\n");
-			fwrite($model,"/** \n");
-			fwrite($model," * @package { NameApp }\n");
-			fwrite($model," * @subpackage ".ucwords($this->table)."_model\n");
-			fwrite($model," * @version 1.0\n");
-			fwrite($model," * @author { NameDev } || { EmailDev } || { TwitterDev }\n");
-			fwrite($model," */ \n");
+
+			$this->_generateDocument('model', $model, ucwords($this->table));
+
 			fwrite($model,"class ".ucwords($this->table)."_model extends CI_Model{\n");
 			fwrite($model,"	\n");
 			fwrite($model,"	public function __construct(){\n");
@@ -267,12 +264,9 @@ class YeeGenerator {
 		$controller = fopen($route, "w+");
 
 			fwrite($controller,"<?php if (! defined('BASEPATH')) exit('No direct script access');\n");
-			fwrite($controller,"/** \n");
-			fwrite($controller," * @package { NameApp }\n");
-			fwrite($controller," * @subpackage ".ucwords($this->table)."\n");
-			fwrite($controller," * @version 1.0\n");
-			fwrite($controller," * @author { NameDev } || { EmailDev } || { TwitterDev }\n");
-			fwrite($controller," */ \n");
+
+			$this->_generateDocument('controller', $controller, ucwords($this->table));
+
 			fwrite($controller,"class ".ucwords($this->table)." extends CI_Controller { \n");
 			fwrite($controller,"\n");
 			fwrite($controller,"	var \$rows_pagination	= 20;\n");
@@ -552,11 +546,8 @@ class YeeGenerator {
 
 		$js = fopen($route, "w+");
 
-			fwrite($js,"/**\n");
-			fwrite($js," * { NameApp }\n");
-			fwrite($js," * $this->table-module.js v1.0\n");
-			fwrite($js," * { NameDev } || { EmailDev } || { TwitterDev }\n");
-			fwrite($js," */\n");
+			$this->_generateDocument('js', $js, $this->table);
+
 			fwrite($js,"$(function() {\n");
 			fwrite($js,"	\n");
 			fwrite($js,"	/* SEARCH */\n");
@@ -690,6 +681,30 @@ class YeeGenerator {
 		}
 
 		return $result;
+	}
+
+	private function _generateDocument($type, $type_component, $subpackage){
+		fwrite($type_component,"/** \n");
+		fwrite($type_component," * @package { NameApp }\n");
+
+		switch ($type) {
+			case 'model':
+					fwrite($type_component," * @subpackage ".$subpackage."_model\n");
+					fwrite($type_component," * @version 1.0\n");
+				break;
+
+			case 'controller':
+					fwrite($type_component," * @subpackage ".$subpackage."\n");
+					fwrite($type_component," * @version 1.0\n");
+				break;
+
+			case 'js':
+					fwrite($type_component," * @subpackage ".$subpackage."-module.js v1.0\n");
+				break;
+		}
+
+		fwrite($type_component," * @author { NameDev } || { EmailDev } || { TwitterDev }\n");
+		fwrite($type_component," */ \n");
 	}
 
 	public function ReadComponent($route){
