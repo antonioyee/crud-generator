@@ -122,7 +122,7 @@ class YeeGenerator {
 			mkdir('./components/'.$this->table.'/models', 0775);
 		}
 
-		$route = './components/'.$this->table.'/models/'.$this->table.'_model.php';
+		$route = './components/' . $this->table . '/models/' . ucfirst($this->table) . '_model.php';
 
 		$model = fopen($route, "w+");
 
@@ -259,7 +259,7 @@ class YeeGenerator {
 			mkdir('./components/'.$this->table.'/controllers', 0775);
 		}
 
-		$route = './components/'.$this->table.'/controllers/'.$this->table.'.php';
+		$route = './components/' . $this->table . '/controllers/' . ucfirst($this->table) . '.php';
 
 		$controller = fopen($route, "w+");
 
@@ -667,8 +667,8 @@ class YeeGenerator {
 
 		if( $zip->open($file_zip, ZIPARCHIVE::CREATE) === true ) {
 
-			$zip->addFile('./components/'.$this->table.'/controllers/'.$this->table.'.php', '/'.$this->table.'/controllers/'.$this->table.'.php');
-			$zip->addFile('./components/'.$this->table.'/models/'.$this->table.'_model.php', '/'.$this->table.'/models/'.$this->table.'_model.php');
+			$zip->addFile('./components/'.$this->table.'/controllers/'.$this->table.'.php', '/'.$this->table.'/controllers/'.ucfirst($this->table).'.php');
+			$zip->addFile('./components/'.$this->table.'/models/'.$this->table.'_model.php', '/'.$this->table.'/models/'.ucfirst($this->table).'_model.php');
 			$zip->addFile('./components/'.$this->table.'/js/'.$this->table.'-module.js', '/'.$this->table.'/js/'.$this->table.'-module.js');
 			$zip->addFile('./components/'.$this->table.'/views/'.$this->table.'-module.php', '/'.$this->table.'/views/'.$this->table.'-module.php');
 			$zip->addFile('./components/'.$this->table.'/views/'.$this->table.'-table.php', '/'.$this->table.'/views/'.$this->table.'-table.php');
