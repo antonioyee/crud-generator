@@ -300,12 +300,12 @@ class YeeGenerator {
 			fwrite($controller,"		if ( \$this->input->is_ajax_request() ) {\n");
 			fwrite($controller,"			\$this->load->library('form_validation');\n");
 			fwrite($controller,"			if ( \$this->input->post('mode') == '1' ) {\n");
-			fwrite($controller,"				\$this->form_validation->set_rules('".$this->primary_key."','".$this->primary_key."','trim|xss_clean|required');\n");
+			fwrite($controller,"				\$this->form_validation->set_rules('".$this->primary_key."','".$this->primary_key."','required');\n");
 			fwrite($controller,"			}\n");
 
 			foreach ($this->field as $key => $value) {
 				if ( $value != $this->primary_key ) {
-					fwrite($controller,"			\$this->form_validation->set_rules('".$value."','".ucwords(str_replace('_', ' ',$value))."','trim|xss_clean|required|max_length[255]');\n");
+					fwrite($controller,"			\$this->form_validation->set_rules('".$value."','".ucwords(str_replace('_', ' ',$value))."','required|max_length[255]');\n");
 				}
 			}
 
@@ -372,7 +372,7 @@ class YeeGenerator {
 			fwrite($controller,"			'page_query_string'		=> FALSE,\n");
 			fwrite($controller,"			'query_string_segment'	=> 'per_page',\n");
 			fwrite($controller,"			'display_pages'			=> TRUE,\n");
-			fwrite($controller,"			'anchor_class'			=> 'class=\"btn-pagination\"');\n");
+			fwrite($controller,"			'attributes'			=> array('class' => 'btn-pagination'));\n");
 			fwrite($controller,"		\$this->pagination->initialize(\$settings_pagination);\n");
 			fwrite($controller,"	}\n");
 			fwrite($controller,"\n");
