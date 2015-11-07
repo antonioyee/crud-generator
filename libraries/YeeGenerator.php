@@ -310,7 +310,7 @@ class YeeGenerator {
 			}
 
 			fwrite($controller,"			if ( \$this->form_validation->run() === FALSE ){\n");
-			fwrite($controller,"				\$result['message']		= \$this->form_validation->_error_array;\n");
+			fwrite($controller,"				\$result['message']		= \$this->form_validation->error_array();\n");
 			fwrite($controller,"				\$result['successful']	= FALSE;\n");
 			fwrite($controller,"			}else{\n");
 			fwrite($controller,"				if ( \$this->model".ucwords($this->table)."->Save".ucwords($this->table)."() ) {\n");
